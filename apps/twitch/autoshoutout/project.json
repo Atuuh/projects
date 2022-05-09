@@ -7,7 +7,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "compiler": "swc",
+        "compiler": "babel",
         "outputPath": "dist/apps/twitch/autoshoutout",
         "index": "apps/twitch/autoshoutout/src/index.html",
         "baseHref": "/",
