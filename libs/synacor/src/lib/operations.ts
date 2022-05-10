@@ -6,7 +6,14 @@ export type Operation =
       length: number;
       args?: number[];
     }
+  | JumpOperation
   | OutOperation;
+
+type JumpOperation = {
+  type: 'jmp';
+  length: 2;
+  args: [number];
+};
 
 type OutOperation = {
   type: 'out';
@@ -14,4 +21,4 @@ type OutOperation = {
   args: [number];
 };
 
-export const jumpOperations: OperationType[] = [];
+export const jumpOperations: OperationType[] = ['jmp'];

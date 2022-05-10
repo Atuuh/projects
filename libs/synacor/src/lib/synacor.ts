@@ -26,6 +26,14 @@ const getOperation = (
         length: 1,
       };
     }
+    case 6: {
+      const args = getArgs(1);
+      return {
+        type: 'jmp',
+        length: 2,
+        args: [args[0]],
+      };
+    }
     case 19: {
       const args = getArgs(1);
       return {
@@ -41,6 +49,8 @@ const getOperation = (
       };
     }
     default: {
+      console.log('Cant read op code', { op });
+
       return {
         type: 'error',
         length: -1,
@@ -79,6 +89,9 @@ export const getVM = ({ logger }: VMConfig) => {
       switch (op.type) {
         case 'halt':
           running = false;
+          break;
+        case 'jmp':
+          cursor = op.args[0];
           break;
         case 'out':
           logger(String.fromCharCode(op.args[0]));
