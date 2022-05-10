@@ -34,6 +34,14 @@ const getOperation = (
         args: [args[0]],
       };
     }
+    case 7: {
+      const args = getArgs(2);
+      return {
+        type: 'jt',
+        length: 3,
+        args: [args[0], args[1]],
+      };
+    }
     case 19: {
       const args = getArgs(1);
       return {
@@ -84,6 +92,7 @@ export const getVM = ({ logger }: VMConfig) => {
     let running = true;
 
     while (running) {
+      let jumped = false;
       const op = getOperation(cursor, program, registers);
 
       switch (op.type) {
@@ -92,6 +101,13 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
         case 'jmp':
           cursor = op.args[0];
+          jumped = true;
+          break;
+        case 'jt':
+          if (op.args[0] !== 0) {
+            cursor = op.args[1];
+            jumped = true;
+          }
           break;
         case 'out':
           logger(String.fromCharCode(op.args[0]));
@@ -100,7 +116,7 @@ export const getVM = ({ logger }: VMConfig) => {
           throw new Error('VM crashed!');
       }
 
-      if (!jumpOperations.includes(op.type)) {
+      if (!jumped) {
         cursor += op.length;
         if (cursor === program.length) {
           running = false;

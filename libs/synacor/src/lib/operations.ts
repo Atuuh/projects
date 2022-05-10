@@ -7,6 +7,7 @@ export type Operation =
       args?: number[];
     }
   | JumpOperation
+  | JumpTrueOperation
   | OutOperation;
 
 type JumpOperation = {
@@ -15,10 +16,16 @@ type JumpOperation = {
   args: [number];
 };
 
+type JumpTrueOperation = {
+  type: 'jt';
+  length: 3;
+  args: [number, number];
+};
+
 type OutOperation = {
   type: 'out';
   length: 2;
   args: [number];
 };
 
-export const jumpOperations: OperationType[] = ['jmp'];
+export const jumpOperations: OperationType[] = ['jmp', 'jt'];
