@@ -7,16 +7,23 @@ export type Operation =
       args?: number[];
     }
   | SetOperation
+  | EqualsOperation
   | JumpOperation
   | JumpTrueOperation
   | JumpFalseOperation
   | AddOperation
   | OutOperation;
 
-export type SetOperation = {
+type SetOperation = {
   type: 'set';
   length: 3;
   args: [number, number];
+};
+
+type EqualsOperation = {
+  type: 'eq';
+  length: 4;
+  args: [number, number, number];
 };
 
 type JumpOperation = {

@@ -1,4 +1,5 @@
-import { Operation, SetOperation } from './operations';
+import { waitForDebugger } from 'inspector';
+import { Operation } from './operations';
 import { newStack } from './stack';
 
 export function synacor(): string {
@@ -37,6 +38,14 @@ const getOperation = (
         type: 'set',
         length: 3,
         args: [program[cursor + 1] - 32768, args[1]],
+      };
+    }
+    case 4: {
+      const args = getArgs(3);
+      return {
+        type: 'add',
+        length: 4,
+        args: [program[cursor + 1] - 32768, args[1], args[2]],
       };
     }
     case 6: {
@@ -135,6 +144,11 @@ export const getVM = ({ logger }: VMConfig) => {
           registers[op.args[0]] = op.args[1];
           break;
 
+        case 'eq':
+          waitForDebugger();
+          registers[op.args[0]] = op.args[1] === op.args[2] ? 1 : 0;
+          break;
+
         case 'jmp':
           cursor = op.args[0];
           jumped = true;
@@ -142,6 +156,12 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'jt':
           if (op.args[0] !== 0) {
+            console.log(
+              'jt: ',
+              op.args[0],
+              'is not zero, jumping to ',
+              op.args[1]
+            );
             cursor = op.args[1];
             jumped = true;
           }
@@ -156,6 +176,7 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'add':
           registers[op.args[0]] = (op.args[1] + op.args[2]) % 32768;
+          console.log({ registers });
           break;
 
         case 'out':
@@ -174,15 +195,17 @@ export const getVM = ({ logger }: VMConfig) => {
         }
       }
     }
-    // console.log({
-    //   commands: commandHistory
-    //     .slice(-20)
-    //     .reverse()
-    //     .map((op) => ({
-    //       op: op.type,
-    //       args: op.args?.join(', '),
-    //     })),
-    // });
+
+    true &&
+      console.log({
+        commands: commandHistory
+          .slice(-20)
+          .reverse()
+          .map((op) => ({
+            op: op.type,
+            args: op.args?.join(', '),
+          })),
+      });
   };
 
   return {
