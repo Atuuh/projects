@@ -64,6 +64,14 @@ const getOperation = (
         args: [program[cursor + 1] - 32768, args[1], args[2]],
       };
     }
+    case 5: {
+      const args = getArgs(3);
+      return {
+        type: 'gt',
+        length: 4,
+        args: [program[cursor + 1] - 32768, args[1], args[2]],
+      };
+    }
     case 6: {
       const args = getArgs(1);
       return {
@@ -94,6 +102,14 @@ const getOperation = (
         type: 'add',
         length: 4,
         args: [program[cursor + 1] - 32768, args[1], args[2]],
+      };
+    }
+    case 12: {
+      const args = getArgs(3);
+      return {
+        type: 'and',
+        length: 4,
+        args: [program[cursor + 1], args[1], args[2]],
       };
     }
     case 19: {
@@ -169,8 +185,11 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'eq':
-          waitForDebugger();
           registers[op.args[0]] = op.args[1] === op.args[2] ? 1 : 0;
+          break;
+
+        case 'gt':
+          registers[op.args[0]] = op.args[1] > op.args[2] ? 1 : 0;
           break;
 
         case 'jmp':
@@ -194,6 +213,10 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'add':
           registers[op.args[0]] = (op.args[1] + op.args[2]) % 32768;
+          break;
+
+        case 'and':
+          registers[op.args[0]] = op.args[1] & op.args[2];
           break;
 
         case 'out':

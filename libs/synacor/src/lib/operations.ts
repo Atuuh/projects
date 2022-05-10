@@ -10,10 +10,12 @@ export type Operation =
   | PushOperation
   | PopOperation
   | EqualsOperation
+  | GreaterThanOperation
   | JumpOperation
   | JumpTrueOperation
   | JumpFalseOperation
   | AddOperation
+  | AndOperation
   | OutOperation;
 
 type SetOperation = {
@@ -40,6 +42,12 @@ type EqualsOperation = {
   args: [number, number, number];
 };
 
+type GreaterThanOperation = {
+  type: 'gt';
+  length: 4;
+  args: [number, number, number];
+};
+
 type JumpOperation = {
   type: 'jmp';
   length: 2;
@@ -60,6 +68,12 @@ type JumpFalseOperation = {
 
 type AddOperation = {
   type: 'add';
+  length: 4;
+  args: [number, number, number];
+};
+
+type AndOperation = {
+  type: 'and';
   length: 4;
   args: [number, number, number];
 };
