@@ -1,4 +1,4 @@
-import { jumpOperations, Operation } from './operations';
+import { Operation } from './operations';
 import { newStack } from './stack';
 
 export function synacor(): string {
@@ -15,7 +15,9 @@ const getOperation = (
   registers: Registers
 ): Operation => {
   const getArgs = (length: number) =>
-    program.slice(cursor + 1, cursor + 1 + length);
+    program
+      .slice(cursor + 1, cursor + 1 + length)
+      .map((arg) => getValue(arg, registers));
 
   const op = getValue(program[cursor], registers);
 
@@ -38,6 +40,14 @@ const getOperation = (
       const args = getArgs(2);
       return {
         type: 'jt',
+        length: 3,
+        args: [args[0], args[1]],
+      };
+    }
+    case 8: {
+      const args = getArgs(2);
+      return {
+        type: 'jf',
         length: 3,
         args: [args[0], args[1]],
       };
@@ -88,13 +98,14 @@ export const getVM = ({ logger }: VMConfig) => {
   const registers: Registers = new Uint16Array(8);
 
   const run = (program: Program) => {
+    const commandHistory = [];
     let cursor = 0;
     let running = true;
 
     while (running) {
       let jumped = false;
       const op = getOperation(cursor, program, registers);
-
+      commandHistory.push(op);
       switch (op.type) {
         case 'halt':
           running = false;
@@ -105,6 +116,12 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
         case 'jt':
           if (op.args[0] !== 0) {
+            cursor = op.args[1];
+            jumped = true;
+          }
+          break;
+        case 'jf':
+          if (op.args[0] === 0) {
             cursor = op.args[1];
             jumped = true;
           }
@@ -124,6 +141,11 @@ export const getVM = ({ logger }: VMConfig) => {
         }
       }
     }
+    console.log({
+      commands: commandHistory
+        .reverse()
+        .map((op) => ({ op: op.type, args: op.args?.join(', ') })),
+    });
   };
 
   return {
