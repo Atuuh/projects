@@ -1,3 +1,4 @@
+import { jumpOperations, Operation } from './operations';
 import { newStack } from './stack';
 
 export function synacor(): string {
@@ -5,28 +6,12 @@ export function synacor(): string {
 }
 
 type VMConfig = {
-  logger: (...args: unknown[]) => void;
-};
-
-type OperationType = Operation['type'];
-
-type Operation =
-  | {
-      type: 'halt' | 'noop' | 'error';
-      length: number;
-      args?: number[];
-    }
-  | OutOperation;
-
-type OutOperation = {
-  type: 'out';
-  length: 2;
-  args: [number];
+  logger: (char: string) => void;
 };
 
 const getOperation = (
   cursor: number,
-  program: number[],
+  program: Program,
   registers: Registers
 ): Operation => {
   const getArgs = (length: number) =>
@@ -64,8 +49,6 @@ const getOperation = (
   }
 };
 
-const jumpOperations: OperationType[] = [];
-
 const getValue = (value: number, registers: Registers) => {
   if (value !== (value & 0xffff)) {
     throw new Error(`${value} is not 16bit`);
@@ -79,13 +62,14 @@ const getValue = (value: number, registers: Registers) => {
   }
 };
 
-type Registers = Int16Array;
+type Registers = Uint16Array;
+type Program = Uint16Array;
 
 export const getVM = ({ logger }: VMConfig) => {
   const stack = newStack<number>();
-  const registers: Registers = new Int16Array(8);
+  const registers: Registers = new Uint16Array(8);
 
-  const run = (program: number[]) => {
+  const run = (program: Program) => {
     let cursor = 0;
     let running = true;
 

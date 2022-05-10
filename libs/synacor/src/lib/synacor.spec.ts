@@ -5,7 +5,7 @@ describe('synacor vm', () => {
     const logFn = jest.fn();
     const vm = getVM({ logger: logFn });
 
-    vm.run([19, 97]);
+    vm.run(new Uint16Array([19, 97]));
 
     expect(logFn).toBeCalledWith('a');
   });
@@ -14,7 +14,7 @@ describe('synacor vm', () => {
     const logFn = jest.fn();
     const vm = getVM({ logger: logFn });
 
-    vm.run([0, 19, 97]);
+    vm.run(new Uint16Array([0, 19, 97]));
 
     expect(logFn).not.toBeCalledWith('a');
   });
