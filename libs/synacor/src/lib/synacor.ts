@@ -1,4 +1,4 @@
-import { Operation } from './operations';
+import { Operation, SetOperation } from './operations';
 import { newStack } from './stack';
 
 export function synacor(): string {
@@ -28,6 +28,17 @@ const getOperation = (
         length: 1,
       };
     }
+    case 1: {
+      const args = getArgs(2);
+      if (args[0] < 0 || args[0] > 7) {
+        throw new Error('Attempted to address register index out of range');
+      }
+      return {
+        type: 'set',
+        length: 3,
+        args: [program[cursor + 1] - 32768, args[1]],
+      };
+    }
     case 6: {
       const args = getArgs(1);
       return {
@@ -50,6 +61,14 @@ const getOperation = (
         type: 'jf',
         length: 3,
         args: [args[0], args[1]],
+      };
+    }
+    case 9: {
+      const args = getArgs(3);
+      return {
+        type: 'add',
+        length: 4,
+        args: [program[cursor + 1] - 32768, args[1], args[2]],
       };
     }
     case 19: {
@@ -106,29 +125,43 @@ export const getVM = ({ logger }: VMConfig) => {
       let jumped = false;
       const op = getOperation(cursor, program, registers);
       commandHistory.push(op);
+
       switch (op.type) {
         case 'halt':
           running = false;
           break;
+
+        case 'set':
+          registers[op.args[0]] = op.args[1];
+          break;
+
         case 'jmp':
           cursor = op.args[0];
           jumped = true;
           break;
+
         case 'jt':
           if (op.args[0] !== 0) {
             cursor = op.args[1];
             jumped = true;
           }
           break;
+
         case 'jf':
           if (op.args[0] === 0) {
             cursor = op.args[1];
             jumped = true;
           }
           break;
+
+        case 'add':
+          registers[op.args[0]] = (op.args[1] + op.args[2]) % 32768;
+          break;
+
         case 'out':
           logger(String.fromCharCode(op.args[0]));
           break;
+
         case 'error':
           throw new Error('VM crashed!');
       }
@@ -141,11 +174,15 @@ export const getVM = ({ logger }: VMConfig) => {
         }
       }
     }
-    console.log({
-      commands: commandHistory
-        .reverse()
-        .map((op) => ({ op: op.type, args: op.args?.join(', ') })),
-    });
+    // console.log({
+    //   commands: commandHistory
+    //     .slice(-20)
+    //     .reverse()
+    //     .map((op) => ({
+    //       op: op.type,
+    //       args: op.args?.join(', '),
+    //     })),
+    // });
   };
 
   return {

@@ -6,10 +6,18 @@ export type Operation =
       length: number;
       args?: number[];
     }
+  | SetOperation
   | JumpOperation
   | JumpTrueOperation
   | JumpFalseOperation
+  | AddOperation
   | OutOperation;
+
+export type SetOperation = {
+  type: 'set';
+  length: 3;
+  args: [number, number];
+};
 
 type JumpOperation = {
   type: 'jmp';
@@ -27,6 +35,12 @@ type JumpFalseOperation = {
   type: 'jf';
   length: 3;
   args: [number, number];
+};
+
+type AddOperation = {
+  type: 'add';
+  length: 4;
+  args: [number, number, number];
 };
 
 type OutOperation = {
