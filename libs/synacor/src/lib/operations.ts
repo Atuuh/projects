@@ -7,6 +7,8 @@ export type Operation =
       args?: number[];
     }
   | SetOperation
+  | PushOperation
+  | PopOperation
   | EqualsOperation
   | JumpOperation
   | JumpTrueOperation
@@ -18,6 +20,18 @@ type SetOperation = {
   type: 'set';
   length: 3;
   args: [number, number];
+};
+
+type PushOperation = {
+  type: 'push';
+  length: 2;
+  args: [number];
+};
+
+type PopOperation = {
+  type: 'pop';
+  length: 2;
+  args: [number];
 };
 
 type EqualsOperation = {

@@ -40,6 +40,22 @@ const getOperation = (
         args: [program[cursor + 1] - 32768, args[1]],
       };
     }
+    case 2: {
+      const args = getArgs(1);
+      return {
+        type: 'push',
+        length: 2,
+        args: [args[0]],
+      };
+    }
+    case 3: {
+      const args = getArgs(1);
+      return {
+        type: 'pop',
+        length: 2,
+        args: [args[0]],
+      };
+    }
     case 4: {
       const args = getArgs(3);
       return {
@@ -144,6 +160,14 @@ export const getVM = ({ logger }: VMConfig) => {
           registers[op.args[0]] = op.args[1];
           break;
 
+        case 'push':
+          stack.push(op.args[0]);
+          break;
+
+        case 'pop':
+          registers[op.args[0]] = stack.pop();
+          break;
+
         case 'eq':
           waitForDebugger();
           registers[op.args[0]] = op.args[1] === op.args[2] ? 1 : 0;
@@ -156,12 +180,6 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'jt':
           if (op.args[0] !== 0) {
-            console.log(
-              'jt: ',
-              op.args[0],
-              'is not zero, jumping to ',
-              op.args[1]
-            );
             cursor = op.args[1];
             jumped = true;
           }
@@ -176,7 +194,6 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'add':
           registers[op.args[0]] = (op.args[1] + op.args[2]) % 32768;
-          console.log({ registers });
           break;
 
         case 'out':
