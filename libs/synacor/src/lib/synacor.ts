@@ -26,7 +26,6 @@ const getOperation = (
     case 0: {
       return {
         type: 'halt',
-        length: 1,
       };
     }
     case 1: {
@@ -36,7 +35,6 @@ const getOperation = (
       }
       return {
         type: 'set',
-        length: 3,
         args: [program[cursor + 1] - 32768, args[1]],
       };
     }
@@ -44,7 +42,6 @@ const getOperation = (
       const args = getArgs(1);
       return {
         type: 'push',
-        length: 2,
         args: [args[0]],
       };
     }
@@ -52,7 +49,6 @@ const getOperation = (
       const args = getArgs(1);
       return {
         type: 'pop',
-        length: 2,
         args: [args[0]],
       };
     }
@@ -60,7 +56,6 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'add',
-        length: 4,
         args: [program[cursor + 1] - 32768, args[1], args[2]],
       };
     }
@@ -68,7 +63,6 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'gt',
-        length: 4,
         args: [program[cursor + 1] - 32768, args[1], args[2]],
       };
     }
@@ -76,7 +70,6 @@ const getOperation = (
       const args = getArgs(1);
       return {
         type: 'jmp',
-        length: 2,
         args: [args[0]],
       };
     }
@@ -84,7 +77,6 @@ const getOperation = (
       const args = getArgs(2);
       return {
         type: 'jt',
-        length: 3,
         args: [args[0], args[1]],
       };
     }
@@ -92,7 +84,6 @@ const getOperation = (
       const args = getArgs(2);
       return {
         type: 'jf',
-        length: 3,
         args: [args[0], args[1]],
       };
     }
@@ -100,7 +91,6 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'add',
-        length: 4,
         args: [program[cursor + 1] - 32768, args[1], args[2]],
       };
     }
@@ -108,7 +98,6 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'and',
-        length: 4,
         args: [program[cursor + 1], args[1], args[2]],
       };
     }
@@ -116,7 +105,6 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'or',
-        length: 4,
         args: [program[cursor + 1], args[1], args[2]],
       };
     }
@@ -124,7 +112,6 @@ const getOperation = (
       const args = getArgs(2);
       return {
         type: 'not',
-        length: 3,
         args: [program[cursor + 1], args[1]],
       };
     }
@@ -132,14 +119,12 @@ const getOperation = (
       const args = getArgs(1);
       return {
         type: 'out',
-        length: 2,
         args: [args[0]],
       };
     }
     case 21: {
       return {
         type: 'noop',
-        length: 1,
       };
     }
     default: {
@@ -147,7 +132,6 @@ const getOperation = (
 
       return {
         type: 'error',
-        length: -1,
       };
     }
   }
@@ -252,7 +236,7 @@ export const getVM = ({ logger }: VMConfig) => {
       }
 
       if (!jumped) {
-        cursor += op.length;
+        cursor += (op.args?.length || 0) + 1;
         if (cursor === program.length) {
           running = false;
           logger('Reached end of program. Terminating');
