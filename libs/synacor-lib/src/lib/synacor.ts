@@ -10,17 +10,11 @@ type VMConfig = {
   logger: (char: string) => void;
 };
 
-const getOperation = (
-  cursor: number,
-  program: Program,
-  registers: Registers
-): Operation => {
+const getOperation = (cursor: number, program: Program): Operation => {
   const getArgs = (length: number) =>
-    program
-      .slice(cursor + 1, cursor + 1 + length)
-      .map((arg) => getValue(arg, registers));
+    program.slice(cursor + 1, cursor + 1 + length);
 
-  const op = getValue(program[cursor], registers);
+  const op = program[cursor];
 
   switch (op) {
     case 0: {
@@ -30,12 +24,9 @@ const getOperation = (
     }
     case 1: {
       const args = getArgs(2);
-      if (args[0] < 0 || args[0] > 7) {
-        throw new Error('Attempted to address register index out of range');
-      }
       return {
         type: 'set',
-        args: [program[cursor + 1] - 32768, args[1]],
+        args: [args[0], args[1]],
       };
     }
     case 2: {
@@ -56,14 +47,14 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'add',
-        args: [program[cursor + 1] - 32768, args[1], args[2]],
+        args: [args[0], args[1], args[2]],
       };
     }
     case 5: {
       const args = getArgs(3);
       return {
         type: 'gt',
-        args: [program[cursor + 1] - 32768, args[1], args[2]],
+        args: [args[0], args[1], args[2]],
       };
     }
     case 6: {
@@ -91,28 +82,28 @@ const getOperation = (
       const args = getArgs(3);
       return {
         type: 'add',
-        args: [program[cursor + 1] - 32768, args[1], args[2]],
+        args: [args[0], args[1], args[2]],
       };
     }
     case 12: {
       const args = getArgs(3);
       return {
         type: 'and',
-        args: [program[cursor + 1], args[1], args[2]],
+        args: [args[0], args[1], args[2]],
       };
     }
     case 13: {
       const args = getArgs(3);
       return {
         type: 'or',
-        args: [program[cursor + 1], args[1], args[2]],
+        args: [args[0], args[1], args[2]],
       };
     }
     case 14: {
       const args = getArgs(2);
       return {
         type: 'not',
-        args: [program[cursor + 1], args[1]],
+        args: [args[0], args[1]],
       };
     }
     case 17: {
@@ -144,26 +135,6 @@ const getOperation = (
   }
 };
 
-const getValue = (value: number, registers: Registers) => {
-  if (value !== (value & 0xffff)) {
-    throw new Error(`${value} is not 16bit`);
-  }
-  if (value >= 0 && value <= 32767) {
-    return value;
-  } else if (value >= 32768 && value <= 32775) {
-    return registers[value - 32768];
-  } else {
-    throw new Error(`${value} is invalid`);
-  }
-};
-
-const getRegister = (index: number) => {
-  if (index < 32768 || index > 32775) {
-    throw new Error(`Register index ${index} invalid`);
-  }
-  return index - 32768;
-};
-
 type Registers = Uint16Array;
 type Program = Uint16Array;
 
@@ -171,15 +142,46 @@ export const getVM = ({ logger }: VMConfig) => {
   const stack = newStack<number>();
   const registers: Registers = new Uint16Array(8);
 
+  const set = (index: number, indexOrValue: number) => {
+    if (index < 32768 || index > 32775) {
+      throw new Error(`Register index ${index} invalid`);
+    }
+    const value = get(indexOrValue);
+    registers[index - 32768] = value;
+  };
+
+  const get = (indexOrValue: number) => {
+    if (indexOrValue >= 0 && indexOrValue < 32768) {
+      return indexOrValue;
+    } else if (indexOrValue >= 32768 && indexOrValue <= 32775) {
+      return registers[indexOrValue - 32768];
+    } else {
+      throw new Error(`Got invalid value ${indexOrValue}`);
+    }
+  };
+
   const run = (program: Program) => {
     const commandHistory = [];
     let cursor = 0;
     let running = true;
+    let jumped = false;
+
+    const jump = (indexOrValue: number) => {
+      const value = get(indexOrValue);
+      jumped = true;
+      cursor = value;
+    };
 
     while (running) {
-      let jumped = false;
-      const op = getOperation(cursor, program, registers);
-      commandHistory.push({ ...op, cursor });
+      jumped = false;
+      const op = getOperation(cursor, program);
+      commandHistory.push({
+        ...op,
+        cursor,
+        args: op.args?.map(
+          (arg) => `${arg}${arg !== get(arg) ? ` (${get(arg)})` : ''}`
+        ),
+      });
 
       switch (op.type) {
         case 'halt':
@@ -187,11 +189,11 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'set':
-          registers[op.args[0]] = op.args[1];
+          set(op.args[0], get(op.args[1]));
           break;
 
         case 'push':
-          stack.push(op.args[0]);
+          stack.push(get(op.args[0]));
           break;
 
         case 'pop':
@@ -199,50 +201,52 @@ export const getVM = ({ logger }: VMConfig) => {
             commands: program.slice(cursor, cursor + 5),
             cursor,
           });
-          registers[getRegister(cursor + 1)] = stack.pop();
+          set(op.args[0], get(stack.pop()));
           break;
 
         case 'eq':
-          registers[op.args[0]] = op.args[1] === op.args[2] ? 1 : 0;
+          set(op.args[0], get(op.args[1]) === get(op.args[2]) ? 1 : 0);
           break;
 
         case 'gt':
-          registers[op.args[0]] = op.args[1] > op.args[2] ? 1 : 0;
+          console.log(
+            `gt: ${op.args[1]}(${get(op.args[1])}) > ${op.args[2]}(${get(
+              op.args[2]
+            )})`
+          );
+          set(op.args[0], get(op.args[1]) > get(op.args[2]) ? 1 : 0);
           break;
 
         case 'jmp':
-          cursor = op.args[0];
-          jumped = true;
+          jump(op.args[0]);
           break;
 
         case 'jt':
-          if (op.args[0] !== 0) {
-            cursor = op.args[1];
-            jumped = true;
+          if (get(op.args[0]) !== 0) {
+            jump(op.args[1]);
           }
           break;
 
         case 'jf':
-          if (op.args[0] === 0) {
-            cursor = op.args[1];
-            jumped = true;
+          if (get(op.args[0]) === 0) {
+            jump(op.args[1]);
           }
           break;
 
         case 'add':
-          registers[op.args[0]] = (op.args[1] + op.args[2]) % 32768;
+          set(op.args[0], (get(op.args[1]) + get(op.args[2])) % 32768);
           break;
 
         case 'and':
-          registers[op.args[0]] = op.args[1] & op.args[2];
+          set(op.args[0], get(op.args[1]) & get(op.args[2]));
           break;
 
         case 'or':
-          registers[op.args[0]] = op.args[1] | op.args[2];
+          set(op.args[0], get(op.args[1]) | get(op.args[2]));
           break;
 
         case 'not':
-          registers[op.args[0]] = ~op.args[1];
+          set(op.args[0], ~get(op.args[1]));
           break;
 
         case 'call':
@@ -251,12 +255,11 @@ export const getVM = ({ logger }: VMConfig) => {
             cursor,
           });
           stack.push(cursor + 2);
-          cursor = op.args[0];
-          jumped = true;
+          jump(op.args[0]);
           break;
 
         case 'out':
-          logger(String.fromCharCode(op.args[0]));
+          logger(String.fromCharCode(get(op.args[0])));
           break;
 
         case 'error':
