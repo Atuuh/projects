@@ -112,6 +112,22 @@ const getOperation = (
         args: [program[cursor + 1], args[1], args[2]],
       };
     }
+    case 13: {
+      const args = getArgs(3);
+      return {
+        type: 'or',
+        length: 4,
+        args: [program[cursor + 1], args[1], args[2]],
+      };
+    }
+    case 14: {
+      const args = getArgs(2);
+      return {
+        type: 'not',
+        length: 3,
+        args: [program[cursor + 1], args[1]],
+      };
+    }
     case 19: {
       const args = getArgs(1);
       return {
@@ -217,6 +233,14 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'and':
           registers[op.args[0]] = op.args[1] & op.args[2];
+          break;
+
+        case 'or':
+          registers[op.args[0]] = op.args[1] | op.args[2];
+          break;
+
+        case 'not':
+          registers[op.args[0]] = ~op.args[1];
           break;
 
         case 'out':

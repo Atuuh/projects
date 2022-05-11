@@ -16,6 +16,8 @@ export type Operation =
   | JumpFalseOperation
   | AddOperation
   | AndOperation
+  | OrOperation
+  | NotOperation
   | OutOperation;
 
 type SetOperation = {
@@ -76,6 +78,18 @@ type AndOperation = {
   type: 'and';
   length: 4;
   args: [number, number, number];
+};
+
+type OrOperation = {
+  type: 'or';
+  length: 4;
+  args: [number, number, number];
+};
+
+type NotOperation = {
+  type: 'not';
+  length: 3;
+  args: [number, number];
 };
 
 type OutOperation = {
