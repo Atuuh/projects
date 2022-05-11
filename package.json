@@ -14,6 +14,7 @@
     "@nrwl/jest": "14.1.4",
     "@nrwl/js": "^14.1.4",
     "@nrwl/linter": "14.1.4",
+    "@nrwl/node": "^14.1.4",
     "@nrwl/react": "^14.1.4",
     "@nrwl/web": "14.1.4",
     "@nrwl/workspace": "14.1.4",

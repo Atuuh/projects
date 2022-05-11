@@ -1,7 +1,8 @@
 {
   "version": 2,
   "projects": {
-    "synacor": "libs/synacor",
+    "synacor": "apps/synacor",
+    "synacor-lib": "libs/synacor-lib",
     "twitch-autoshoutout": "apps/twitch/autoshoutout"
   }
 }

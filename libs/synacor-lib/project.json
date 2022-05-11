@@ -1,29 +1,29 @@
 {
-  "sourceRoot": "libs/synacor/src",
+  "sourceRoot": "libs/synacor-lib/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nrwl/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/synacor",
-        "main": "libs/synacor/src/index.ts",
-        "tsConfig": "libs/synacor/tsconfig.lib.json",
-        "assets": ["libs/synacor/*.md"]
+        "outputPath": "dist/libs/synacor-lib",
+        "main": "libs/synacor-lib/src/index.ts",
+        "tsConfig": "libs/synacor-lib/tsconfig.lib.json",
+        "assets": ["libs/synacor-lib/*.md"]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/synacor/**/*.ts"]
+        "lintFilePatterns": ["libs/synacor-lib/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/synacor"],
+      "outputs": ["coverage/libs/synacor-lib"],
       "options": {
-        "jestConfig": "libs/synacor/jest.config.ts",
+        "jestConfig": "libs/synacor-lib/jest.config.ts",
         "passWithNoTests": true
       }
     }

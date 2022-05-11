@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@projects/synacor": ["libs/synacor/src/index.ts"]
+      "@projects/synacor-lib": ["libs/synacor-lib/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

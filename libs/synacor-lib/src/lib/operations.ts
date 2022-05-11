@@ -17,6 +17,7 @@ export type Operation =
   | AndOperation
   | OrOperation
   | NotOperation
+  | CallOperation
   | OutOperation;
 
 type SetOperation = {
@@ -77,6 +78,11 @@ type OrOperation = {
 type NotOperation = {
   type: 'not';
   args: [number, number];
+};
+
+type CallOperation = {
+  type: 'call';
+  args: [number];
 };
 
 type OutOperation = {

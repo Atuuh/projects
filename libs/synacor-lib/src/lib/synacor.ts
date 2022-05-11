@@ -115,6 +115,13 @@ const getOperation = (
         args: [program[cursor + 1], args[1]],
       };
     }
+    case 17: {
+      const args = getArgs(1);
+      return {
+        type: 'call',
+        args: [args[0]],
+      };
+    }
     case 19: {
       const args = getArgs(1);
       return {
@@ -150,6 +157,13 @@ const getValue = (value: number, registers: Registers) => {
   }
 };
 
+const getRegister = (index: number) => {
+  if (index < 32768 || index > 32775) {
+    throw new Error(`Register index ${index} invalid`);
+  }
+  return index - 32768;
+};
+
 type Registers = Uint16Array;
 type Program = Uint16Array;
 
@@ -165,7 +179,7 @@ export const getVM = ({ logger }: VMConfig) => {
     while (running) {
       let jumped = false;
       const op = getOperation(cursor, program, registers);
-      commandHistory.push(op);
+      commandHistory.push({ ...op, cursor });
 
       switch (op.type) {
         case 'halt':
@@ -181,7 +195,11 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'pop':
-          registers[op.args[0]] = stack.pop();
+          console.log('Pop op', {
+            commands: program.slice(cursor, cursor + 5),
+            cursor,
+          });
+          registers[getRegister(cursor + 1)] = stack.pop();
           break;
 
         case 'eq':
@@ -227,6 +245,16 @@ export const getVM = ({ logger }: VMConfig) => {
           registers[op.args[0]] = ~op.args[1];
           break;
 
+        case 'call':
+          console.log('Call op', {
+            commands: program.slice(cursor, cursor + 5),
+            cursor,
+          });
+          stack.push(cursor + 2);
+          cursor = op.args[0];
+          jumped = true;
+          break;
+
         case 'out':
           logger(String.fromCharCode(op.args[0]));
           break;
@@ -247,9 +275,10 @@ export const getVM = ({ logger }: VMConfig) => {
     true &&
       console.log({
         commands: commandHistory
-          .slice(-20)
+          .slice(-30)
           .reverse()
           .map((op) => ({
+            cursor: op.cursor,
             op: op.type,
             args: op.args?.join(', '),
           })),
