@@ -66,10 +66,6 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'pop':
-          console.log('Pop op', {
-            commands: program.slice(cursor, cursor + 5),
-            cursor,
-          });
           set(op.args[0], get(stack.pop()));
           break;
 
@@ -78,11 +74,6 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'gt':
-          console.log(
-            `gt: ${op.args[1]}(${get(op.args[1])}) > ${op.args[2]}(${get(
-              op.args[2]
-            )})`
-          );
           set(op.args[0], get(op.args[1]) > get(op.args[2]) ? 1 : 0);
           break;
 
@@ -135,12 +126,12 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'call':
-          console.log('Call op', {
-            commands: program.slice(cursor, cursor + 5),
-            cursor,
-          });
           stack.push(cursor + 2);
           jump(op.args[0]);
+          break;
+
+        case 'ret':
+          jump(stack.pop());
           break;
 
         case 'out':
