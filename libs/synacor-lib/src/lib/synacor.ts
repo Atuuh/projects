@@ -1,6 +1,6 @@
 import { getOperation } from './operations';
 import { Program } from './program';
-import { Registers } from './registers';
+import { isRegisterIndex, Registers } from './registers';
 import { newStack } from './stack';
 
 type VMConfig = {
@@ -128,6 +128,10 @@ export const getVM = ({ logger }: VMConfig) => {
 
         case 'rmem':
           set(op.args[0], program[get(op.args[1])]);
+          break;
+
+        case 'wmem':
+          program[get(op.args[0])] = get(op.args[1]);
           break;
 
         case 'call':

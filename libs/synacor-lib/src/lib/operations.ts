@@ -120,6 +120,13 @@ export const getOperation = (cursor: number, program: Program): Operation => {
         args: [args[0], args[1]],
       };
     }
+    case 16: {
+      const args = getArgs(2);
+      return {
+        type: 'wmem',
+        args: [args[0], args[1]],
+      };
+    }
     case 17: {
       const args = getArgs(1);
       return {
@@ -172,6 +179,7 @@ export type Operation =
   | OrOperation
   | NotOperation
   | ReadOperation
+  | WriteOperation
   | CallOperation
   | OutOperation
   | NoOperation;
@@ -221,6 +229,8 @@ type OrOperation = Operation2<'or', 3>;
 type NotOperation = Operation2<'not', 2>;
 
 type ReadOperation = Operation2<'rmem', 2>;
+
+type WriteOperation = Operation2<'wmem', 2>;
 
 type CallOperation = Operation2<'call', 1>;
 
