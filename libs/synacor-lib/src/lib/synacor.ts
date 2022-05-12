@@ -126,6 +126,10 @@ export const getVM = ({ logger }: VMConfig) => {
           set(op.args[0], ~get(op.args[1]) & 0x7fff);
           break;
 
+        case 'rmem':
+          set(op.args[0], program[get(op.args[1])]);
+          break;
+
         case 'call':
           console.log('Call op', {
             commands: program.slice(cursor, cursor + 5),
