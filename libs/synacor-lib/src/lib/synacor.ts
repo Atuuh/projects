@@ -110,6 +110,10 @@ export const getVM = ({ logger }: VMConfig) => {
           set(op.args[0], get(op.args[1]) & get(op.args[2]));
           break;
 
+        case 'mult':
+          set(op.args[0], (get(op.args[1]) * get(op.args[2])) % 32768);
+          break;
+
         case 'or':
           set(op.args[0], get(op.args[1]) | get(op.args[2]));
           break;

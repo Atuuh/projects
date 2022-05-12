@@ -71,6 +71,13 @@ export const getOperation = (cursor: number, program: Program): Operation => {
         args: [args[0], args[1]],
       };
     }
+    case 10: {
+      const args = getArgs(3);
+      return {
+        type: 'mult',
+        args: [args[0], args[1], args[2]],
+      };
+    }
     case 9: {
       const args = getArgs(3);
       return {
@@ -145,6 +152,7 @@ export type Operation =
   | JumpTrueOperation
   | JumpFalseOperation
   | AddOperation
+  | MultiplyOperation
   | AndOperation
   | OrOperation
   | NotOperation
@@ -185,6 +193,8 @@ type JumpTrueOperation = Operation2<'jt', 2>;
 type JumpFalseOperation = Operation2<'jf', 2>;
 
 type AddOperation = Operation2<'add', 3>;
+
+type MultiplyOperation = Operation2<'mult', 3>;
 
 type AndOperation = Operation2<'and', 3>;
 
