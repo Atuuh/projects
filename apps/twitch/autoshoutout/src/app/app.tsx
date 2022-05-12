@@ -1,18 +1,10 @@
 import styled from 'styled-components';
-import NxWelcome from './nx-welcome';
+import tmi, { Events } from 'tmi.js';
+import { useEffect, useRef, useState } from 'react';
 
 const StyledApp = styled.div`
   // Your style here
 `;
-
-import tmi, { Events } from 'tmi.js';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
 
 const client = new tmi.Client({
   channels: ['ginomachino'],

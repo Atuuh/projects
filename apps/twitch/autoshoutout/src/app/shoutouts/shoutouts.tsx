@@ -1,19 +1,13 @@
 import styled from 'styled-components';
 
 /* eslint-disable-next-line */
-export interface ShoutoutsProps {
-  usernames: string[]
-
-}
+export interface ShoutoutsProps {}
 
 const StyledShoutouts = styled.div`
   color: pink;
 `;
 
-export function Shoutouts({usernames}: ShoutoutsProps) {
-
-const check
-
+export function Shoutouts(props: ShoutoutsProps) {
   return (
     <StyledShoutouts>
       <h1>Welcome to Shoutouts!</h1>

@@ -115,7 +115,7 @@ export const getVM = ({ logger }: VMConfig) => {
           break;
 
         case 'not':
-          set(op.args[0], ~get(op.args[1]));
+          set(op.args[0], ~get(op.args[1]) & 0x7fff);
           break;
 
         case 'call':

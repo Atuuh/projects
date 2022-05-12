@@ -12,6 +12,7 @@ export const getOperation = (cursor: number, program: Program): Operation => {
     case 0: {
       return {
         type: 'halt',
+        args: undefined,
       };
     }
     case 1: {
@@ -38,7 +39,7 @@ export const getOperation = (cursor: number, program: Program): Operation => {
     case 4: {
       const args = getArgs(3);
       return {
-        type: 'add',
+        type: 'eq',
         args: [args[0], args[1], args[2]],
       };
     }
@@ -115,6 +116,7 @@ export const getOperation = (cursor: number, program: Program): Operation => {
     case 21: {
       return {
         type: 'noop',
+        args: undefined,
       };
     }
     default: {
@@ -122,6 +124,7 @@ export const getOperation = (cursor: number, program: Program): Operation => {
 
       return {
         type: 'error',
+        args: undefined,
       };
     }
   }
@@ -129,9 +132,10 @@ export const getOperation = (cursor: number, program: Program): Operation => {
 
 export type Operation =
   | {
-      type: 'halt' | 'noop' | 'error';
-      args?: number[];
+      type: 'error';
+      args: undefined;
     }
+  | HaltOperation
   | SetOperation
   | PushOperation
   | PopOperation
@@ -145,74 +149,51 @@ export type Operation =
   | OrOperation
   | NotOperation
   | CallOperation
-  | OutOperation;
+  | OutOperation
+  | NoOperation;
 
-type SetOperation = {
-  type: 'set';
-  args: [number, number];
+type Operation2<
+  Type extends string,
+  Count extends 1 | 2 | 3 | undefined = undefined
+> = {
+  type: Type;
+  args: Count extends 3
+    ? [number, number, number]
+    : Count extends 2
+    ? [number, number]
+    : Count extends 1
+    ? [number]
+    : undefined;
 };
 
-type PushOperation = {
-  type: 'push';
-  args: [number];
-};
+type SetOperation = Operation2<'set', 2>;
 
-type PopOperation = {
-  type: 'pop';
-  args: [number];
-};
+type PushOperation = Operation2<'push', 1>;
 
-type EqualsOperation = {
-  type: 'eq';
-  args: [number, number, number];
-};
+type PopOperation = Operation2<'pop', 1>;
 
-type GreaterThanOperation = {
-  type: 'gt';
-  args: [number, number, number];
-};
+type HaltOperation = Operation2<'halt'>;
 
-type JumpOperation = {
-  type: 'jmp';
-  args: [number];
-};
+type EqualsOperation = Operation2<'eq', 3>;
 
-type JumpTrueOperation = {
-  type: 'jt';
-  args: [number, number];
-};
+type GreaterThanOperation = Operation2<'gt', 3>;
 
-type JumpFalseOperation = {
-  type: 'jf';
-  args: [number, number];
-};
+type JumpOperation = Operation2<'jmp', 1>;
 
-type AddOperation = {
-  type: 'add';
-  args: [number, number, number];
-};
+type JumpTrueOperation = Operation2<'jt', 2>;
 
-type AndOperation = {
-  type: 'and';
-  args: [number, number, number];
-};
+type JumpFalseOperation = Operation2<'jf', 2>;
 
-type OrOperation = {
-  type: 'or';
-  args: [number, number, number];
-};
+type AddOperation = Operation2<'add', 3>;
 
-type NotOperation = {
-  type: 'not';
-  args: [number, number];
-};
+type AndOperation = Operation2<'and', 3>;
 
-type CallOperation = {
-  type: 'call';
-  args: [number];
-};
+type OrOperation = Operation2<'or', 3>;
 
-type OutOperation = {
-  type: 'out';
-  args: [number];
-};
+type NotOperation = Operation2<'not', 2>;
+
+type CallOperation = Operation2<'call', 1>;
+
+type OutOperation = Operation2<'out', 1>;
+
+type NoOperation = Operation2<'noop'>;
