@@ -71,6 +71,13 @@ export const getOperation = (cursor: number, program: Program): Operation => {
         args: [args[0], args[1]],
       };
     }
+    case 9: {
+      const args = getArgs(3);
+      return {
+        type: 'add',
+        args: [args[0], args[1], args[2]],
+      };
+    }
     case 10: {
       const args = getArgs(3);
       return {
@@ -78,10 +85,10 @@ export const getOperation = (cursor: number, program: Program): Operation => {
         args: [args[0], args[1], args[2]],
       };
     }
-    case 9: {
+    case 11: {
       const args = getArgs(3);
       return {
-        type: 'add',
+        type: 'mod',
         args: [args[0], args[1], args[2]],
       };
     }
@@ -153,6 +160,7 @@ export type Operation =
   | JumpFalseOperation
   | AddOperation
   | MultiplyOperation
+  | ModuloOperation
   | AndOperation
   | OrOperation
   | NotOperation
@@ -195,6 +203,8 @@ type JumpFalseOperation = Operation2<'jf', 2>;
 type AddOperation = Operation2<'add', 3>;
 
 type MultiplyOperation = Operation2<'mult', 3>;
+
+type ModuloOperation = Operation2<'mod', 3>;
 
 type AndOperation = Operation2<'and', 3>;
 
