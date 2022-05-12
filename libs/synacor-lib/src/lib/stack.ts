@@ -16,5 +16,6 @@ export const newStack = <T>() => {
   return {
     push,
     pop,
+    values: values as ReadonlyArray<T>,
   };
 };

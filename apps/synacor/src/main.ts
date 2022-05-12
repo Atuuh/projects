@@ -4,22 +4,6 @@ import * as readline from 'readline';
 
 const data = reader('./apps/synacor/challenge.bin');
 
-// const getInput = () =>
-//   new Promise<string>((resolve) => {
-//     stdin.setRawMode(true);
-//     stdin.resume();
-//     stdin.setEncoding('utf-8');
-//     stdin.once('data', (character) => {
-//       const char = character as unknown as string;
-//       stdin.pause();
-//       if (char === '\x03') {
-//         process.exit();
-//       }
-//       stdout.write(char);
-//       resolve(char.replace('\r', '\n'));
-//     });
-//   });
-
 let bufferInput = '';
 const getChar = () => {
   if (bufferInput.length > 0) {
@@ -35,7 +19,7 @@ const getInput = async () =>
       resolve(getChar());
     } else {
       const rl = readline.createInterface({ input: stdin, output: stdout });
-      rl.question('', (line) => {
+      rl.question('> ', (line) => {
         bufferInput = line.concat('\n');
         resolve(getChar());
         rl.close();

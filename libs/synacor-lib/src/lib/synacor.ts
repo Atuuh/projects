@@ -31,7 +31,6 @@ export const getVM = ({ logger, getInput }: VMConfig) => {
   };
 
   const run = async (program: Program) => {
-    const commandHistory = [];
     let cursor = 0;
     let running = true;
     let jumped = false;
@@ -45,13 +44,6 @@ export const getVM = ({ logger, getInput }: VMConfig) => {
     while (running) {
       jumped = false;
       const op = getOperation(cursor, program);
-      commandHistory.push({
-        ...op,
-        cursor,
-        args: op.args?.map(
-          (arg) => `${arg}${arg !== get(arg) ? ` (${get(arg)})` : ''}`
-        ),
-      });
 
       switch (op.type) {
         case 'halt':
@@ -142,6 +134,9 @@ export const getVM = ({ logger, getInput }: VMConfig) => {
         case 'in': {
           const input = await getInput();
           set(op.args[0], input.charCodeAt(0));
+          if (input === '~') {
+            console.log(registers, stack.values);
+          }
           break;
         }
 
@@ -157,18 +152,6 @@ export const getVM = ({ logger, getInput }: VMConfig) => {
         }
       }
     }
-
-    true &&
-      console.log({
-        commands: commandHistory
-          .slice(-30)
-          .reverse()
-          .map((op) => ({
-            cursor: op.cursor,
-            op: op.type,
-            args: op.args?.join(', '),
-          })),
-      });
   };
 
   return {
