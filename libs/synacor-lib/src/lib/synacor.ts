@@ -1,13 +1,14 @@
 import { getOperation } from './operations';
 import { Program } from './program';
-import { isRegisterIndex, Registers } from './registers';
+import { Registers } from './registers';
 import { newStack } from './stack';
 
 type VMConfig = {
   logger: (char: string) => void;
+  getInput: () => Promise<string>;
 };
 
-export const getVM = ({ logger }: VMConfig) => {
+export const getVM = ({ logger, getInput }: VMConfig) => {
   const stack = newStack<number>();
   const registers: Registers = new Uint16Array(8);
 
@@ -29,7 +30,7 @@ export const getVM = ({ logger }: VMConfig) => {
     }
   };
 
-  const run = (program: Program) => {
+  const run = async (program: Program) => {
     const commandHistory = [];
     let cursor = 0;
     let running = true;
@@ -137,6 +138,12 @@ export const getVM = ({ logger }: VMConfig) => {
         case 'out':
           logger(String.fromCharCode(get(op.args[0])));
           break;
+
+        case 'in': {
+          const input = await getInput();
+          set(op.args[0], input.charCodeAt(0));
+          break;
+        }
 
         case 'error':
           throw new Error('VM crashed!');

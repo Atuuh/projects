@@ -147,6 +147,13 @@ export const getOperation = (cursor: number, program: Program): Operation => {
         args: [args[0]],
       };
     }
+    case 20: {
+      const args = getArgs(1);
+      return {
+        type: 'in',
+        args: [args[0]],
+      };
+    }
     case 21: {
       return {
         type: 'noop',
@@ -189,6 +196,7 @@ export type Operation =
   | CallOperation
   | ReturnOperation
   | OutOperation
+  | InOperation
   | NoOperation;
 
 type Operation2<
@@ -244,5 +252,7 @@ type CallOperation = Operation2<'call', 1>;
 type ReturnOperation = Operation2<'ret'>;
 
 type OutOperation = Operation2<'out', 1>;
+
+type InOperation = Operation2<'in', 1>;
 
 type NoOperation = Operation2<'noop'>;
