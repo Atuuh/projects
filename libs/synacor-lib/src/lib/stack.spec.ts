@@ -1,8 +1,8 @@
-import { newStack } from './stack';
+import { createStack } from './stack';
 
 describe('stack', () => {
   it('should work correctly', () => {
-    const stack = newStack();
+    const stack = createStack();
 
     stack.push(5);
     stack.push(10);

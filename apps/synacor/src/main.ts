@@ -1,6 +1,6 @@
-import { reader, getVM } from '@projects/synacor-lib';
 import { stdin, stdout } from 'process';
 import * as readline from 'readline';
+import { createVm, reader } from '@projects/synacor-lib';
 
 const data = reader('./apps/synacor/challenge.bin');
 
@@ -13,6 +13,7 @@ const getChar = () => {
   }
   throw new Error('No text remaining');
 };
+
 const getInput = async () =>
   new Promise<string>((resolve) => {
     if (bufferInput.length > 0) {
@@ -27,9 +28,9 @@ const getInput = async () =>
     }
   });
 
-const vm = getVM({ logger: (val) => process.stdout.write(val), getInput });
+const machine = createVm({
+  logger: (val) => process.stdout.write(val),
+  getInput,
+});
 
-const intcodePrint = (message: string) =>
-  message.split('').flatMap((char) => [19, char.charCodeAt(0)]);
-
-vm.run(data);
+machine.run(data).then((result) => console.log(result));

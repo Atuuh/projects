@@ -1,4 +1,10 @@
-export const newStack = <T>() => {
+export type Stack<T> = {
+  push: (value: T) => void;
+  pop: () => T;
+  values: ReadonlyArray<T>;
+};
+
+export const createStack = <T>(): Stack<T> => {
   const values: T[] = [];
 
   const push = (value: T) => {
