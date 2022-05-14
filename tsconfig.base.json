@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@projects/factorio/blueprint": ["libs/factorio/blueprint/src/index.ts"],
       "@projects/synacor-lib": ["libs/synacor-lib/src/index.ts"]
     }
   },

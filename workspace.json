@@ -1,6 +1,7 @@
 {
   "version": 2,
   "projects": {
+    "factorio-blueprint": "libs/factorio/blueprint",
     "synacor": "apps/synacor",
     "synacor-lib": "libs/synacor-lib",
     "twitch-autoshoutout": "apps/twitch/autoshoutout"
