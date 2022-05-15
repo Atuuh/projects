@@ -1,7 +1,12 @@
-import { factorioBlueprint } from './factorio-blueprint';
+import { decode, encode } from './factorio-blueprint';
+import { testDecodedObject, testEncodedString } from '../test';
 
 describe('factorioBlueprint', () => {
-  it('should work', () => {
-    expect(factorioBlueprint()).toEqual('factorio-blueprint');
+  it('should decode correctly', () => {
+    expect(decode(testEncodedString)).toEqual(testDecodedObject);
+  });
+
+  it('should encode correctly', () => {
+    expect(encode(testDecodedObject)).toEqual(testEncodedString);
   });
 });
