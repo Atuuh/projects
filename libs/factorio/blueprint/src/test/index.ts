@@ -1,6 +1,8 @@
+import { BlueprintObject } from '../lib/factorio-blueprint';
+
 export const testEncodedString =
   '0eNqVkt1qwzAMhd9F104h/kk2v8ooI01FZ3DkYLtjIfjd5yRQ0s5s3aWMznd0ZM1wslccvaEIegbTOwqg32YI5kKdXd7iNCJoMBEHYEDdsFbeUdV/YIiQGBg64xfoOrG/hRTQR/Q7GU9HBkjRRIOb+VpM73QdTrlT1z/VDEYXssDR4pQhlZAHxWAC3dYHleFn47HfGpplrgcmL0UpUMWeWuCIGycMnbUV2uzqTV+NzuKvY/IyUD4VVu0pd2Flgan+t0DxyOQFZvMUU9ylzf+8XoPeXR2DT/Rhs3mpZfvKW6WkVG2T0jel3dhm';
-export const testDecodedObject = {
+export const testDecodedObject: BlueprintObject = {
   blueprint: {
     icons: [
       {
