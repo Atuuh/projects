@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@projects/data-structures": ["libs/data-structures/src/index.ts"],
       "@projects/synacor-lib": ["libs/synacor-lib/src/index.ts"]
     }
   },

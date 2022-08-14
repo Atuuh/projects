@@ -1,6 +1,7 @@
 {
   "version": 2,
   "projects": {
+    "data-structures": "libs/data-structures",
     "synacor": "apps/synacor",
     "synacor-lib": "libs/synacor-lib",
     "twitch-autoshoutout": "apps/twitch/autoshoutout"

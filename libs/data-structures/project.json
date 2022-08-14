@@ -1,0 +1,32 @@
+{
+  "sourceRoot": "libs/data-structures/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:swc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/data-structures",
+        "main": "libs/data-structures/src/index.ts",
+        "tsConfig": "libs/data-structures/tsconfig.lib.json",
+        "assets": ["libs/data-structures/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/data-structures/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/data-structures"],
+      "options": {
+        "jestConfig": "libs/data-structures/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
